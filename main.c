@@ -2,7 +2,7 @@
  * @ Author: Shimin Cao
  * @ Create Time: 2020-04-26 00:11:06
  * @ Modified by: Shimin Cao
- * @ Modified time: 2020-05-29 17:09:43
+ * @ Modified time: 2020-05-30 01:37:41
  * @ Description:
  */
 
@@ -32,7 +32,7 @@ int main(int argc, char **argv)
     int tid = omp_get_thread_num();
     double *array = NULL;
     particle *allpar = NULL;
-    char *default_arg[] = {argv[0], ".\\initial-10000.txt", ".\\final.txt", "10000", "2", "2"};
+    char *default_arg[] = {argv[0], ".\\initial-2000.txt", ".\\final.txt", "2", "2", "8"};
     char *input_file = NULL;
     char *output_file = NULL;
     int N = 0, D = 0, p = 0, m = 0;
@@ -40,7 +40,9 @@ int main(int argc, char **argv)
     clock_t start, finish, mid;
     double duration;
     char tmp_name[1024];
-    int N_snap = 1000;
+    int N_snap = 100;
+    int total_round = 3950;
+    double deltaT = 0.005;
 
     if (argc < 2)
     {
@@ -55,24 +57,35 @@ int main(int argc, char **argv)
     printf("%s,%s,%d,%d,%d\n", input_file, output_file, N, D, p);
 
     allpar = readParticle(input_file, N, D, p);
-    set_v(allpar, N);
-    set_flag(allpar, N);
-    collide(allpar, N);
+
+    set_zero_v(allpar, N);
+    set_initial_flags(allpar, N);
+    sprintf(tmp_name, ".\\snapshot\\round%07d.txt", 0);
+    allpar = writeParticle(tmp_name, allpar, N, D, p);
+
     start = clock();
     mid = clock();
-    for (int kk = 0; kk < 1000000; kk++)
+    for (int kk = 0; kk < total_round; kk++)
     {
 
-        calc_a(allpar, N, D, 0.0005);
-        calc_v_and_x(allpar, N, D, 0.0005);
+        calc_a(allpar, N, D, deltaT);
+        if (kk > 3900)
+            N_snap = 1;
+        if (kk % N_snap == 0 && kk > 0)
+        {
+            int c = (*coll_list).count;
+            printf("%d rounds done. %d particle pairs collide.\n", kk, c);
+        }
         collide(allpar, N);
-        if (kk % N_snap == 0)
+        calc_v_and_x(allpar, N, D, deltaT);
+
+        if (kk % N_snap == 0 && kk > 0)
         {
             sprintf(tmp_name, ".\\snapshot\\round%07d.txt", kk);
             allpar = writeParticle(tmp_name, allpar, N, D, p);
             finish = clock();
             duration = (double)(finish - mid) / CLOCKS_PER_SEC;
-            printf("%d rounds done. Elapsed time: %lf ms per round.\n", kk, duration * 1000 / N_snap);
+            printf("Elapsed time: %lf ms per round.\n", duration * 1000 / N_snap);
             mid = clock();
         }
     }

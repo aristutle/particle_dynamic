@@ -2,7 +2,7 @@
  * @ Author: Shimin Cao
  * @ Create Time: 2020-04-26 01:47:17
  * @ Modified by: Shimin Cao
- * @ Modified time: 2020-05-02 12:38:35
+ * @ Modified time: 2020-05-30 01:22:59
  * @ Description:
  */
 
@@ -20,6 +20,10 @@ particle *array_to_particle(double *arr, int n, int D, int p);
 double *particle_to_array(particle *par, int n, int D, int p);
 particle *readParticle(const char *filename, int n, int D, int p);
 particle *writeParticle(const char *filename, particle *parptr, int n, int D, int p);
+int list_ini(pair_list *l);
+int list_add(pair_list *l, int *a, int *b);
+int list_pop(pair_list *l, int *a, int *b);
+int list_show(pair_list *l);
 
 particle *readParticle(const char *filename, int n, int D, int p)
 {
@@ -105,7 +109,7 @@ double *writeArray(const char *filename, double *arr, int n, int D, int p)
         for (j = 0; j < m; j++)
         {
             if (j)
-                fprintf(fp, " ");
+                fprintf(fp, "\t");
             fprintf(fp, "%lf", buffer[k++]);
         }
         fprintf(fp, "\n");
@@ -131,10 +135,14 @@ particle *array_to_particle(double *arr, int n, int D, int p)
         res[i].R.y = arr[k++];
         if (D >= 3)
             res[i].R.z = arr[k++];
+        else
+            res[i].R.z = 0;
         res[i].V.x = arr[k++];
         res[i].V.y = arr[k++];
         if (D >= 3)
             res[i].V.z = arr[k++];
+        else
+            res[i].V.z = 0;
         for (j = 0; j < p; j++)
         {
             res[i].ppt[j] = arr[k++];
@@ -170,4 +178,53 @@ double *particle_to_array(particle *par, int n, int D, int p)
         }
     }
     return res;
+}
+
+int list_ini(pair_list *l)
+{
+    (*l).count = 0;
+    return 0;
+}
+
+int list_add(pair_list *l, int *a, int *b)
+{
+    pair x = {*a, *b};
+    if ((*l).count >= LIST_MAX)
+    {
+        printf("Fatal error! Too much elements in pair list!\n");
+        exit(-1);
+    }
+    (*l)._list[(*l).count++] = x;
+    return (*l).count;
+}
+int list_pop(pair_list *l, int *a, int *b)
+{
+    pair x = {0, 0};
+    if ((*l).count <= 0)
+    {
+        return -1;
+    }
+    x = (*l)._list[--(*l).count];
+    *a = x.i;
+    *b = x.j;
+    return (*l).count;
+}
+int list_show(pair_list *l)
+{
+    int i = 0;
+    for (i = 0; i < (*l).count; i++)
+    {
+        printf("%d\t%07d\t%07d\n", i, (*l)._list[i].i, (*l)._list[i].j);
+    }
+    printf("done.\n");
+    return 0;
+}
+int list_clear(pair_list *l)
+{
+    if ((*l).count > 0)
+    {
+        printf("Non-empty pair list warning!\n");
+    }
+    (*l).count = 0;
+    return 0;
 }
