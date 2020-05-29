@@ -18,4 +18,5 @@ for i in range(ppt):
         # flag
         result[D * 2 + i] = 1
 print(result.shape)
-np.savetxt('initial-1000000', result.T, delimiter='\t')
+np.savetxt('initial-1000000.txt', result.T, delimiter='\t')
+print("output done!")
