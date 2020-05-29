@@ -1,8 +1,8 @@
 /**
  * @ Author: Shimin Cao
  * @ Create Time: 2020-04-26 00:11:06
- * @ Modified by: Your name
- * @ Modified time: 2020-05-23 11:22:46
+ * @ Modified by: Shimin Cao
+ * @ Modified time: 2020-05-29 17:09:43
  * @ Description:
  */
 
@@ -26,7 +26,7 @@ int main(int argc, char **argv)
                 note that D can be 2 or 3, but struct of vector in the program is always 3 dimension.
     [p]         number of particle properties. All scalar.
                 total particle property number should be 2*D+m, which is also number of input file column.
-
+    before running, establish "snapshot" directory in current position to contain snapshot results!
     */
     int i = 0;
     int tid = omp_get_thread_num();
@@ -68,7 +68,7 @@ int main(int argc, char **argv)
         collide(allpar, N);
         if (kk % N_snap == 0)
         {
-            sprintf(tmp_name, ".\\data-large\\round%07d.txt", kk);
+            sprintf(tmp_name, ".\\snapshot\\round%07d.txt", kk);
             allpar = writeParticle(tmp_name, allpar, N, D, p);
             finish = clock();
             duration = (double)(finish - mid) / CLOCKS_PER_SEC;
