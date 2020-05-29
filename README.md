@@ -9,3 +9,5 @@ The column number can change in the future, adding more properties to the assemb
 The program will run a given number of rounds of given time interval, using dynamic simulation method ("leap-frog").
 In the process, snapshots of system state can be saved for animation or diagnostic.
 Finally the system state can be output to a txt file.
+
+Enjoy!
