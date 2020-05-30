@@ -1,5 +1,5 @@
 import numpy as np
-N = 2000
+N = 5000
 D = 2  # dimension
 ppt = 8  # property number
 result = np.zeros([D * 2 + ppt, N])

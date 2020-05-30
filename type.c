@@ -2,7 +2,7 @@
  * @ Author: Shimin Cao
  * @ Create Time: 2020-05-02 01:29:44
  * @ Modified by: Shimin Cao
- * @ Modified time: 2020-05-30 01:46:47
+ * @ Modified time: 2020-05-30 11:10:59
  * @ Description:
  */
 #pragma once
@@ -13,6 +13,12 @@
 //distribute BLOCKSIZE particles as one batch to each thread,
 //and give another when some thread is idle.
 //This can improve multithread efficiency.
+
+//Here we use the “Position Extended Forest - Ruth Like” (PEFRL) algorithm to improve calculation precision.
+//Below are some constants.
+const double ksi = +0.1786178958448091E+00;
+const double lambda = -0.2123418310626054E+00;
+const double chi = -0.6626458266981849E-01;
 
 #define PI 3.141592653
 #define SQUR(x) ((x) * (x))

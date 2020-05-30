@@ -2,7 +2,7 @@
  * @ Author: Shimin Cao
  * @ Create Time: 2020-04-26 00:11:06
  * @ Modified by: Shimin Cao
- * @ Modified time: 2020-05-30 01:37:41
+ * @ Modified time: 2020-05-30 12:10:42
  * @ Description:
  */
 
@@ -32,7 +32,7 @@ int main(int argc, char **argv)
     int tid = omp_get_thread_num();
     double *array = NULL;
     particle *allpar = NULL;
-    char *default_arg[] = {argv[0], ".\\initial-2000.txt", ".\\final.txt", "2", "2", "8"};
+    char *default_arg[] = {argv[0], ".\\initial-5000.txt", ".\\final.txt", "5000", "2", "8"};
     char *input_file = NULL;
     char *output_file = NULL;
     int N = 0, D = 0, p = 0, m = 0;
@@ -40,9 +40,9 @@ int main(int argc, char **argv)
     clock_t start, finish, mid;
     double duration;
     char tmp_name[1024];
-    int N_snap = 100;
-    int total_round = 3950;
-    double deltaT = 0.005;
+    int N_snap = 1000;
+    int total_round = 40000;
+    double deltaT = 0.001;
 
     if (argc < 2)
     {
@@ -67,17 +67,32 @@ int main(int argc, char **argv)
     mid = clock();
     for (int kk = 0; kk < total_round; kk++)
     {
-
-        calc_a(allpar, N, D, deltaT);
-        if (kk > 3900)
-            N_snap = 1;
-        if (kk % N_snap == 0 && kk > 0)
+        if (kk > 19000 && kk < 20000)
         {
-            int c = (*coll_list).count;
-            printf("%d rounds done. %d particle pairs collide.\n", kk, c);
+
+            if (kk > 19700 && kk < 20000)
+            {
+                N_snap = 10;
+            }
+            else
+            {
+                N_snap = 100;
+            }
         }
-        collide(allpar, N);
-        calc_v_and_x(allpar, N, D, deltaT);
+        else
+        {
+            N_snap = 1000;
+        }
+
+        calc_x(allpar, N, D, ksi * deltaT);
+        calc_v(allpar, N, D, (0.5 - lambda) * deltaT);
+        calc_x(allpar, N, D, chi * deltaT);
+        calc_v(allpar, N, D, lambda * deltaT);
+        calc_x(allpar, N, D, (1 - 2 * (chi + ksi)) * deltaT);
+        calc_v(allpar, N, D, lambda * deltaT);
+        calc_x(allpar, N, D, chi * deltaT);
+        calc_v(allpar, N, D, (0.5 - lambda) * deltaT);
+        calc_x(allpar, N, D, ksi * deltaT);
 
         if (kk % N_snap == 0 && kk > 0)
         {
@@ -85,7 +100,7 @@ int main(int argc, char **argv)
             allpar = writeParticle(tmp_name, allpar, N, D, p);
             finish = clock();
             duration = (double)(finish - mid) / CLOCKS_PER_SEC;
-            printf("Elapsed time: %lf ms per round.\n", duration * 1000 / N_snap);
+            printf("%d rounds done. Elapsed time: %lf ms per round.\n", kk, duration * 1000 / N_snap);
             mid = clock();
         }
     }
