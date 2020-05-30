@@ -2,7 +2,7 @@
  * @ Author: Shimin Cao
  * @ Create Time: 2020-05-02 01:26:20
  * @ Modified by: Shimin Cao
- * @ Modified time: 2020-05-30 11:36:15
+ * @ Modified time: 2020-05-30 13:29:22
  * @ Description:
  */
 
@@ -20,6 +20,7 @@ double set_zero_v(particle *all, int N);
 double set_initial_flags(particle *all, int N);
 double find_collide(particle *all, int N, int D);
 double collide(particle *all, int N);
+double count_particles(particle *all, int N);
 
 vector force(particle target, particle source)
 {
@@ -181,4 +182,18 @@ double collide(particle *all, int N)
     }
     list_clear(coll_list);
     return 0;
+}
+
+double count_particles(particle *all, int N)
+{
+    int i = 0;
+    int count = 0;
+    for (i = 0; i < N; i++)
+    {
+        if (all[i].ppt[EXIST_FLAG] > 0)
+        {
+            count++;
+        }
+    }
+    return count;
 }

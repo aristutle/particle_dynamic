@@ -2,7 +2,7 @@
  * @ Author: Shimin Cao
  * @ Create Time: 2020-04-26 00:11:06
  * @ Modified by: Shimin Cao
- * @ Modified time: 2020-05-30 12:12:28
+ * @ Modified time: 2020-05-30 13:30:45
  * @ Description:
  */
 
@@ -40,9 +40,10 @@ int main(int argc, char **argv)
     clock_t start, finish, mid;
     double duration;
     char tmp_name[1024];
-    int N_snap = 1000;
-    int total_round = 40000;
-    double deltaT = 0.001;
+    int N_snap = 100;
+    int total_round = 10000;
+    int particle_number = 0;
+    double deltaT = 0.0001;
 
     if (argc < 2)
     {
@@ -65,7 +66,7 @@ int main(int argc, char **argv)
 
     start = clock();
     mid = clock();
-    for (int kk = 0; kk < total_round; kk++)
+    for (int kk = 0; kk <= total_round; kk++)
     {
 
         calc_x(allpar, N, D, ksi * deltaT);
@@ -84,7 +85,8 @@ int main(int argc, char **argv)
             allpar = writeParticle(tmp_name, allpar, N, D, p);
             finish = clock();
             duration = (double)(finish - mid) / CLOCKS_PER_SEC;
-            printf("%d rounds done. Elapsed time: %lf ms per round.\n", kk, duration * 1000 / N_snap);
+            particle_number = count_particles(allpar, N);
+            printf("%d rounds done. %lf ms per round, %d particles left.\n", kk, duration * 1000 / N_snap, particle_number);
             mid = clock();
         }
     }
