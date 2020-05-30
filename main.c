@@ -2,7 +2,7 @@
  * @ Author: Shimin Cao
  * @ Create Time: 2020-04-26 00:11:06
  * @ Modified by: Shimin Cao
- * @ Modified time: 2020-05-30 12:10:42
+ * @ Modified time: 2020-05-30 12:12:28
  * @ Description:
  */
 
@@ -67,22 +67,6 @@ int main(int argc, char **argv)
     mid = clock();
     for (int kk = 0; kk < total_round; kk++)
     {
-        if (kk > 19000 && kk < 20000)
-        {
-
-            if (kk > 19700 && kk < 20000)
-            {
-                N_snap = 10;
-            }
-            else
-            {
-                N_snap = 100;
-            }
-        }
-        else
-        {
-            N_snap = 1000;
-        }
 
         calc_x(allpar, N, D, ksi * deltaT);
         calc_v(allpar, N, D, (0.5 - lambda) * deltaT);
